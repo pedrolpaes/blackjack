@@ -22,10 +22,22 @@ blackjack_1(char *host)
 	}
 #endif	/* DEBUG */
 
+	printf("Select 'start', 'hit' or 'stand'");
+	scanf("%s", process_call_1_arg);
 	result_1 = process_call_1(&process_call_1_arg, clnt);
 	if (result_1 == (deal *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
+	if(result_1->card_1 != NULL){
+		printf("Your card: %s", result_1->card_1);
+	}
+	if(result_1->card_2 != NULL){
+		printf("Your card: %s", result_1->card_2);
+	}
+	if(result_1->dealer_card != NULL){
+		printf("Dealer card: %s", result_1->dealer_card);
+	}
+	printf("%s", result_1->msg);
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */

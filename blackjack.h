@@ -24,6 +24,7 @@ struct deal {
 	card *card_1;
 	card *card_2;
 	card *dealer_card;
+	char msg[50];
 };
 typedef struct deal deal;
 

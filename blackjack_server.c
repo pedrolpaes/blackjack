@@ -38,32 +38,73 @@ process_call_1_svc(player_call *argp, struct svc_req *rqstp)
 	//player_hand TODO: Salvar a mao do dealer e do player. Somar o total de pontos na mao do dealer, ele tem que parar assim q tiver mais do qu 17 pontos
 	//dealer_hand Se o nome da carta comecar com 'A', ela vale 1 ou 11, se comecar com um numero, ela vale o valor do numero, else ela vale 10
 
-	if(total_points(dealer_hand)>17){
-		printf("endgame");
-		return;
-	}else if (strcmp('start', argp->player_call) == 0) {
+	if (strcmp('start', argp->player_call) == 0) {
 		card_1 = select_card(deck); 
-		card_2 = select_card(deck);
-		face_up_dealer_card = select_card(deck);
-		face_down_dealer_card = select_card(deck);
-
 		result.card_1 = deck[card_1].card_name;
 		append_card(player_hand, deck[card_1].card_name);
 		deck[card_1].card_name = NULL;
 
+		card_2 = select_card(deck);
 		result.card_2 = deck[card_2].card_name;
 		append_card(player_hand, deck[card_2].card_name);
 		deck[card_2].card_name = NULL;
 
+		face_up_dealer_card = select_card(deck);
 		result.dealer_card = deck[face_up_dealer_card].card_name;
-		append_card(face_up_dealer_card, deck[face_up_dealer_card].card_name);
+		append_card(dealer_hand, deck[face_up_dealer_card].card_name);
 		deck[face_up_dealer_card].card_name = NULL;
 
-		append_card(face_down_dealer_card, deck[face_down_dealer_card].card_name);
+		face_down_dealer_card = select_card(deck);
+		append_card(dealer_hand, deck[face_down_dealer_card].card_name);
+		deck[face_down_dealer_card].card_name = NULL;
+
+		char buffer[256];
+    	sprintf(buffer, "Your hand is %s and %s. The dealer face up card is %s", result.card_1, result.card_2, result.dealer_card);
+    	strcpy(result.msg, buffer);
+
+		return &result;
+
 	}else if (strcmp('hit', argp->player_call) == 0) {
-		
+		card_1 = select_card(deck); 
+		result.card_1 = deck[card_1].card_name;
+		append_card(player_hand, deck[card_1].card_name);
+		deck[card_1].card_name = NULL;
+		if(total_points(dealer_hand)<17){
+			face_up_dealer_card = select_card(deck);
+			result.dealer_card = deck[face_up_dealer_card].card_name;
+			append_card(face_up_dealer_card, deck[face_up_dealer_card].card_name);
+			deck[face_up_dealer_card].card_name = NULL;
+		}
+		if(match_result() == 1){
+			char buffer[50];
+    		sprintf(buffer, "You Win!");
+    		strcpy(result.msg, buffer);
+		}else{
+			char buffer[50];
+    		sprintf(buffer, "You Lose...");
+    		strcpy(result.msg, buffer);
+		}
+
+		return &result;
+
 	}else if (strcmp('stand', argp->player_call) == 0) {
-		
+		if(total_points(dealer_hand)<17){
+			face_up_dealer_card = select_card(deck);
+			result.dealer_card = deck[face_up_dealer_card].card_name;
+			append_card(face_up_dealer_card, deck[face_up_dealer_card].card_name);
+			deck[face_up_dealer_card].card_name = NULL;
+		}
+		if(match_result() == 1){
+			char buffer[50];
+    		sprintf(buffer, "You Win!");
+    		strcpy(result.msg, buffer);
+		}else{
+			char buffer[50];
+    		sprintf(buffer, "You Lose...");
+    		strcpy(result.msg, buffer);
+		}
+
+		return &result;
 	}
 
 	return &result;
@@ -81,7 +122,7 @@ int select_card(struct Deck *deck){ // Pick a card position from the deck where 
 }
 
 void append_card(char hand[][4], char *card){ // Add a given card to a given hand
-	for(int i = 0; i <= 15; i++){
+	for(int i = 0; i < 15; i++){
 		if(hand[i][0] == '\0'){
 			strcpy(hand[i], card);
 			break;
@@ -95,15 +136,15 @@ int total_points(char hand[][4]){ // Sum the points of a given hand
 	for(int i=0; i<15; i++){ // Loops the hand searching for points while counting the number of "Ace" cards
 		if(hand[i][0] == 'A'){
 			ace_counter++;
-		}else if(isdigit((int)hand[i][0]) && strlen(hand[i]) == 2){
-			total_sum += (int)hand[i][0];
+		}else if(isdigit(hand[i][0]) && strlen(hand[i]) == 2){
+			total_sum += hand[i][0] - '0';
 		}else{
 			total_sum += 10;
 		}
 	}
 
 	for(int i=0; i<ace_counter; i++){ // Since an "Ace" can be either 1 or 11, which one is the most beneficial to the hand, we need sum it last
-		if((total_sum + 11) > 17){
+		if((total_sum + 11) >= 17){
 			total_sum += 1;
 		}else{
 			total_sum += 11;
@@ -111,4 +152,12 @@ int total_points(char hand[][4]){ // Sum the points of a given hand
 	}
 	
 	return total_sum;
+}
+
+int match_result(){
+	if(total_points(dealer_hand) > 21 || (total_points(dealer_hand) < total_points(player_hand) && total_points(player_hand) <= 21)){
+		return 1;
+	} else{
+		return 0;
+	}
 }
