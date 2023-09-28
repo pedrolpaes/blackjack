@@ -9,15 +9,15 @@
 /* Default timeout can be changed using clnt_control() */
 static struct timeval TIMEOUT = { 25, 0 };
 
-deal *
-process_call_1(player_call *argp, CLIENT *clnt)
+comms *
+process_call_2(comms *argp, CLIENT *clnt)
 {
-	static deal clnt_res;
+	static comms clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	if (clnt_call (clnt, process_call,
-		(xdrproc_t) xdr_player_call, (caddr_t) argp,
-		(xdrproc_t) xdr_deal, (caddr_t) &clnt_res,
+		(xdrproc_t) xdr_comms, (caddr_t) argp,
+		(xdrproc_t) xdr_comms, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}

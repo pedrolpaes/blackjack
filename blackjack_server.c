@@ -16,7 +16,6 @@ char dealer_hand[15][4] = {};
 char player_hand[15][4] = {}; 
 
 struct Deck {
-	//int key;
 	char *card_name;
 };
 
@@ -78,11 +77,11 @@ int match_result(){
 	}
 }
 
-deal *
-process_call_1_svc(player_call *argp, struct svc_req *rqstp)
+comms *
+process_call_2_svc(comms *argp, struct svc_req *rqstp)
 {
 	printf("@@@@@@@@");
-	static deal  result;
+	static comms  result;
 	printf("PASSOU AQUI1");
 	int card_1 = -1;
 	printf("PASSOU AQUI2");
@@ -99,17 +98,17 @@ process_call_1_svc(player_call *argp, struct svc_req *rqstp)
 
 	if (strcmp("start", argp->player_call) == 0) {
 		card_1 = select_card(deck); 
-		result.card_1 = deck[card_1].card_name;
+		strncpy(result.card_1, deck[card_1].card_name, sizeof(result.card_1));
 		append_card(player_hand, deck[card_1].card_name);
 		deck[card_1].card_name = NULL;
 
 		card_2 = select_card(deck);
-		result.card_2 = deck[card_2].card_name;
+		strncpy(result.card_2, deck[card_2].card_name, sizeof(result.card_2));
 		append_card(player_hand, deck[card_2].card_name);
 		deck[card_2].card_name = NULL;
 
 		face_up_dealer_card = select_card(deck);
-		result.dealer_card = deck[face_up_dealer_card].card_name;
+		strncpy(result.dealer_card, deck[face_up_dealer_card].card_name, sizeof(result.dealer_card));
 		append_card(dealer_hand, deck[face_up_dealer_card].card_name);
 		deck[face_up_dealer_card].card_name = NULL;
 
@@ -125,12 +124,12 @@ process_call_1_svc(player_call *argp, struct svc_req *rqstp)
 
 	}else if (strcmp("hit", argp->player_call) == 0) {
 		card_1 = select_card(deck); 
-		result.card_1 = deck[card_1].card_name;
+		strncpy(result.card_1, deck[card_1].card_name, sizeof(result.card_1));
 		append_card(player_hand, deck[card_1].card_name);
 		deck[card_1].card_name = NULL;
 		if(total_points(dealer_hand)<17){
 			face_up_dealer_card = select_card(deck);
-			result.dealer_card = deck[face_up_dealer_card].card_name;
+			strncpy(result.dealer_card, deck[face_up_dealer_card].card_name, sizeof(result.dealer_card));
 			append_card(dealer_hand, deck[face_up_dealer_card].card_name);
 			deck[face_up_dealer_card].card_name = NULL;
 		}
@@ -149,7 +148,7 @@ process_call_1_svc(player_call *argp, struct svc_req *rqstp)
 	}else if (strcmp("stand", argp->player_call) == 0) {
 		if(total_points(dealer_hand)<17){
 			face_up_dealer_card = select_card(deck);
-			result.dealer_card = deck[face_up_dealer_card].card_name;
+			strncpy(result.dealer_card, deck[face_up_dealer_card].card_name, sizeof(result.dealer_card));
 			append_card(dealer_hand, deck[face_up_dealer_card].card_name);
 			deck[face_up_dealer_card].card_name = NULL;
 		}
@@ -168,6 +167,3 @@ process_call_1_svc(player_call *argp, struct svc_req *rqstp)
 
 	return &result;
 }
-
-
-

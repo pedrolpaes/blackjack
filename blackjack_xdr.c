@@ -6,37 +6,25 @@
 #include "blackjack.h"
 
 bool_t
-xdr_card (XDR *xdrs, card *objp)
+xdr_comms (XDR *xdrs, comms *objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_int (xdrs, &objp->key))
+	int i;
+	 if (!xdr_vector (xdrs, (char *)objp->card_1, 4,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
-	 if (!xdr_pointer (xdrs, (char **)&objp->card_name, sizeof (char), (xdrproc_t) xdr_char))
+	 if (!xdr_vector (xdrs, (char *)objp->card_2, 4,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
-	return TRUE;
-}
-
-bool_t
-xdr_deal (XDR *xdrs, deal *objp)
-{
-	register int32_t *buf;
-
-	 if (!xdr_pointer (xdrs, (char **)&objp->card_1, sizeof (card), (xdrproc_t) xdr_card))
+	 if (!xdr_vector (xdrs, (char *)objp->dealer_card, 4,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
-	 if (!xdr_pointer (xdrs, (char **)&objp->card_2, sizeof (card), (xdrproc_t) xdr_card))
+	 if (!xdr_vector (xdrs, (char *)objp->msg, 50,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
-	 if (!xdr_pointer (xdrs, (char **)&objp->dealer_card, sizeof (card), (xdrproc_t) xdr_card))
-		 return FALSE;
-	return TRUE;
-}
-
-bool_t
-xdr_player_call (XDR *xdrs, player_call *objp)
-{
-	register int32_t *buf;
-
-	 if (!xdr_pointer (xdrs, (char **)&objp->player_call, sizeof (char), (xdrproc_t) xdr_char))
+	 if (!xdr_vector (xdrs, (char *)objp->player_call, 10,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
 	return TRUE;
 }

@@ -12,16 +12,15 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-
 #ifndef SIG_PF
 #define SIG_PF void(*)(int)
 #endif
 
 static void
-blackjack_1(struct svc_req *rqstp, register SVCXPRT *transp)
+blackjack_2(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
-		player_call process_call_1_arg;
+		comms process_call_2_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -33,9 +32,9 @@ blackjack_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		return;
 
 	case process_call:
-		_xdr_argument = (xdrproc_t) xdr_player_call;
-		_xdr_result = (xdrproc_t) xdr_deal;
-		local = (char *(*)(char *, struct svc_req *)) process_call_1_svc;
+		_xdr_argument = (xdrproc_t) xdr_comms;
+		_xdr_result = (xdrproc_t) xdr_comms;
+		local = (char *(*)(char *, struct svc_req *)) process_call_2_svc;
 		break;
 
 	default:
@@ -70,7 +69,7 @@ main (int argc, char **argv)
 		fprintf (stderr, "%s", "cannot create udp service.");
 		exit(1);
 	}
-	if (!svc_register(transp, BLACKJACK, VERSION, blackjack_1, IPPROTO_UDP)) {
+	if (!svc_register(transp, BLACKJACK, VERSION, blackjack_2, IPPROTO_UDP)) {
 		fprintf (stderr, "%s", "unable to register (BLACKJACK, VERSION, udp).");
 		exit(1);
 	}
@@ -80,7 +79,7 @@ main (int argc, char **argv)
 		fprintf (stderr, "%s", "cannot create tcp service.");
 		exit(1);
 	}
-	if (!svc_register(transp, BLACKJACK, VERSION, blackjack_1, IPPROTO_TCP)) {
+	if (!svc_register(transp, BLACKJACK, VERSION, blackjack_2, IPPROTO_TCP)) {
 		fprintf (stderr, "%s", "unable to register (BLACKJACK, VERSION, tcp).");
 		exit(1);
 	}

@@ -1,20 +1,14 @@
-struct card {
-    int key;
-    char *card_name;
-};
 
-struct deal {
-    card *card_1;
-    card *card_2;
-    card *dealer_card;
-};
-
-struct player_call {
-    char *player_call;
+struct comms {
+    char card_1[4];
+    char card_2[4];
+    char dealer_card[4];
+    char msg[50];
+    char player_call[10];
 };
 
 program BLACKJACK {
     version VERSION {
-        deal process_call(player_call) = 1;
-    } = 1;
-} = 1;
+        comms process_call(comms) = 1;
+    } = 2;
+} = 2;

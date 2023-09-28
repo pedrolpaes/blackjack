@@ -14,52 +14,38 @@ extern "C" {
 #endif
 
 
-struct card {
-	int key;
-	char *card_name;
-};
-typedef struct card card;
-
-struct deal {
-	char *card_1;
-	char *card_2;
-	char *dealer_card;
+struct comms {
+	char card_1[4];
+	char card_2[4];
+	char dealer_card[4];
 	char msg[50];
+	char player_call[10];
 };
-typedef struct deal deal;
+typedef struct comms comms;
 
-struct player_call {
-	char *player_call;
-};
-typedef struct player_call player_call;
-
-#define BLACKJACK 1
-#define VERSION 1
+#define BLACKJACK 2
+#define VERSION 2
 
 #if defined(__STDC__) || defined(__cplusplus)
 #define process_call 1
-extern  deal * process_call_1(player_call *, CLIENT *);
-extern  deal * process_call_1_svc(player_call *, struct svc_req *);
-extern int blackjack_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+extern  comms * process_call_2(comms *, CLIENT *);
+extern  comms * process_call_2_svc(comms *, struct svc_req *);
+extern int blackjack_2_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
 #define process_call 1
-extern  deal * process_call_1();
-extern  deal * process_call_1_svc();
-extern int blackjack_1_freeresult ();
+extern  comms * process_call_2();
+extern  comms * process_call_2_svc();
+extern int blackjack_2_freeresult ();
 #endif /* K&R C */
 
 /* the xdr functions */
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  bool_t xdr_card (XDR *, card*);
-extern  bool_t xdr_deal (XDR *, deal*);
-extern  bool_t xdr_player_call (XDR *, player_call*);
+extern  bool_t xdr_comms (XDR *, comms*);
 
 #else /* K&R C */
-extern bool_t xdr_card ();
-extern bool_t xdr_deal ();
-extern bool_t xdr_player_call ();
+extern bool_t xdr_comms ();
 
 #endif /* K&R C */
 
