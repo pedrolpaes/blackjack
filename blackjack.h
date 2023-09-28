@@ -21,9 +21,9 @@ struct card {
 typedef struct card card;
 
 struct deal {
-	card *card_1;
-	card *card_2;
-	card *dealer_card;
+	char *card_1;
+	char *card_2;
+	char *dealer_card;
 	char msg[50];
 };
 typedef struct deal deal;

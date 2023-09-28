@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 #define DEALER_POINTS_LIMIT = 17
 
 char dealer_hand[15][4] = {};
@@ -26,92 +27,7 @@ struct Deck deck[] = {
 	"2S","3S","4S","5S","6S","7S","8S","9S","10S", "JS", "QS", "KS", "AS"
 	};
 
-deal *
-process_call_1_svc(player_call *argp, struct svc_req *rqstp)
-{
-	static deal  result;
-	
-	int card_1 = -1;
-	int card_2 = -1;
-	int face_up_dealer_card = -1;
-	int face_down_dealer_card = -1;
-	//player_hand TODO: Salvar a mao do dealer e do player. Somar o total de pontos na mao do dealer, ele tem que parar assim q tiver mais do qu 17 pontos
-	//dealer_hand Se o nome da carta comecar com 'A', ela vale 1 ou 11, se comecar com um numero, ela vale o valor do numero, else ela vale 10
-
-	if (strcmp('start', argp->player_call) == 0) {
-		card_1 = select_card(deck); 
-		result.card_1 = deck[card_1].card_name;
-		append_card(player_hand, deck[card_1].card_name);
-		deck[card_1].card_name = NULL;
-
-		card_2 = select_card(deck);
-		result.card_2 = deck[card_2].card_name;
-		append_card(player_hand, deck[card_2].card_name);
-		deck[card_2].card_name = NULL;
-
-		face_up_dealer_card = select_card(deck);
-		result.dealer_card = deck[face_up_dealer_card].card_name;
-		append_card(dealer_hand, deck[face_up_dealer_card].card_name);
-		deck[face_up_dealer_card].card_name = NULL;
-
-		face_down_dealer_card = select_card(deck);
-		append_card(dealer_hand, deck[face_down_dealer_card].card_name);
-		deck[face_down_dealer_card].card_name = NULL;
-
-		char buffer[256];
-    	sprintf(buffer, "Your hand is %s and %s. The dealer face up card is %s", result.card_1, result.card_2, result.dealer_card);
-    	strcpy(result.msg, buffer);
-
-		return &result;
-
-	}else if (strcmp('hit', argp->player_call) == 0) {
-		card_1 = select_card(deck); 
-		result.card_1 = deck[card_1].card_name;
-		append_card(player_hand, deck[card_1].card_name);
-		deck[card_1].card_name = NULL;
-		if(total_points(dealer_hand)<17){
-			face_up_dealer_card = select_card(deck);
-			result.dealer_card = deck[face_up_dealer_card].card_name;
-			append_card(face_up_dealer_card, deck[face_up_dealer_card].card_name);
-			deck[face_up_dealer_card].card_name = NULL;
-		}
-		if(match_result() == 1){
-			char buffer[50];
-    		sprintf(buffer, "You Win!");
-    		strcpy(result.msg, buffer);
-		}else{
-			char buffer[50];
-    		sprintf(buffer, "You Lose...");
-    		strcpy(result.msg, buffer);
-		}
-
-		return &result;
-
-	}else if (strcmp('stand', argp->player_call) == 0) {
-		if(total_points(dealer_hand)<17){
-			face_up_dealer_card = select_card(deck);
-			result.dealer_card = deck[face_up_dealer_card].card_name;
-			append_card(face_up_dealer_card, deck[face_up_dealer_card].card_name);
-			deck[face_up_dealer_card].card_name = NULL;
-		}
-		if(match_result() == 1){
-			char buffer[50];
-    		sprintf(buffer, "You Win!");
-    		strcpy(result.msg, buffer);
-		}else{
-			char buffer[50];
-    		sprintf(buffer, "You Lose...");
-    		strcpy(result.msg, buffer);
-		}
-
-		return &result;
-	}
-
-	return &result;
-}
-
-
-int select_card(struct Deck *deck){ // Pick a card position from the deck where the is sure to be a valid card
+int select_card(struct Deck *deck){ // Pick a card position from the deck where the is sure to be a valid card 
 	srand(time(NULL)); 
 	int num = rand() % 52; // Generate a random number from 0 to 51
 	while(deck[num].card_name == NULL ){
@@ -161,3 +77,97 @@ int match_result(){
 		return 0;
 	}
 }
+
+deal *
+process_call_1_svc(player_call *argp, struct svc_req *rqstp)
+{
+	printf("@@@@@@@@");
+	static deal  result;
+	printf("PASSOU AQUI1");
+	int card_1 = -1;
+	printf("PASSOU AQUI2");
+	int card_2 = -1;
+	printf("PASSOU AQUI3");
+	int face_up_dealer_card = -1;
+	printf("PASSOU AQUI4");
+	int face_down_dealer_card = -1;
+	printf("PASSOU AQUI5");
+	//player_hand TODO: Salvar a mao do dealer e do player. Somar o total de pontos na mao do dealer, ele tem que parar assim q tiver mais do qu 17 pontos
+	//dealer_hand Se o nome da carta comecar com 'A', ela vale 1 ou 11, se comecar com um numero, ela vale o valor do numero, else ela vale 10
+	printf("PASSOU AQUI@@@@@");
+	printf("%s", argp->player_call);
+
+	if (strcmp("start", argp->player_call) == 0) {
+		card_1 = select_card(deck); 
+		result.card_1 = deck[card_1].card_name;
+		append_card(player_hand, deck[card_1].card_name);
+		deck[card_1].card_name = NULL;
+
+		card_2 = select_card(deck);
+		result.card_2 = deck[card_2].card_name;
+		append_card(player_hand, deck[card_2].card_name);
+		deck[card_2].card_name = NULL;
+
+		face_up_dealer_card = select_card(deck);
+		result.dealer_card = deck[face_up_dealer_card].card_name;
+		append_card(dealer_hand, deck[face_up_dealer_card].card_name);
+		deck[face_up_dealer_card].card_name = NULL;
+
+		face_down_dealer_card = select_card(deck);
+		append_card(dealer_hand, deck[face_down_dealer_card].card_name);
+		deck[face_down_dealer_card].card_name = NULL;
+
+		char buffer[256];
+    	sprintf(buffer, "Your hand is %s and %s. The dealer face up card is %s", result.card_1, result.card_2, result.dealer_card);
+    	strcpy(result.msg, buffer);
+
+		return &result;
+
+	}else if (strcmp("hit", argp->player_call) == 0) {
+		card_1 = select_card(deck); 
+		result.card_1 = deck[card_1].card_name;
+		append_card(player_hand, deck[card_1].card_name);
+		deck[card_1].card_name = NULL;
+		if(total_points(dealer_hand)<17){
+			face_up_dealer_card = select_card(deck);
+			result.dealer_card = deck[face_up_dealer_card].card_name;
+			append_card(dealer_hand, deck[face_up_dealer_card].card_name);
+			deck[face_up_dealer_card].card_name = NULL;
+		}
+		if(match_result() == 1){
+			char buffer[50];
+    		sprintf(buffer, "You Win!");
+    		strcpy(result.msg, buffer);
+		}else{
+			char buffer[50];
+    		sprintf(buffer, "You Lose...");
+    		strcpy(result.msg, buffer);
+		}
+
+		return &result;
+
+	}else if (strcmp("stand", argp->player_call) == 0) {
+		if(total_points(dealer_hand)<17){
+			face_up_dealer_card = select_card(deck);
+			result.dealer_card = deck[face_up_dealer_card].card_name;
+			append_card(dealer_hand, deck[face_up_dealer_card].card_name);
+			deck[face_up_dealer_card].card_name = NULL;
+		}
+		if(match_result() == 1){
+			char buffer[50];
+    		sprintf(buffer, "You Win!");
+    		strcpy(result.msg, buffer);
+		}else{
+			char buffer[50];
+    		sprintf(buffer, "You Lose...");
+    		strcpy(result.msg, buffer);
+		}
+
+		return &result;
+	}
+
+	return &result;
+}
+
+
+

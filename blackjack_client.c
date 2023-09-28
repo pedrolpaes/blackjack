@@ -5,6 +5,8 @@
  */
 
 #include "blackjack.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 void
@@ -22,9 +24,12 @@ blackjack_1(char *host)
 	}
 #endif	/* DEBUG */
 
-	printf("Select 'start', 'hit' or 'stand'");
-	scanf("%s", process_call_1_arg);
+	printf("Select 'start', 'hit' or 'stand'\n");
+	scanf("%s", process_call_1_arg.player_call);
 	result_1 = process_call_1(&process_call_1_arg, clnt);
+	
+	printf("%s\n", result_1->msg);
+
 	if (result_1 == (deal *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
