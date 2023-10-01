@@ -21,12 +21,38 @@ blackjack_2(char *host)
 		exit (1);
 	}
 #endif	/* DEBUG */
+	int stop_condition = 0;
 
-	printf("Select 'start', 'hit' or 'stand'\n");
-	scanf("%s", process_call_2_arg.player_call);
-	result_1 = process_call_2(&process_call_2_arg, clnt);
+	while(stop_condition != 1){
+		printf("Select 'start', 'hit' or 'stand'\n");
+		scanf("%s", process_call_2_arg.player_call);
+		result_1 = process_call_2(&process_call_2_arg, clnt);
 	
-	printf("%s\n", result_1->msg);
+		printf("%s\n", result_1->msg);
+
+		if(strcmp("You Win!", result_1->msg) == 0 || strcmp("You Lose...", result_1->msg) == 0){
+			printf("Player hand:\n");
+			for (int i = 0; i < 15; i++) {
+        		if (result_1->ph[i][0] != '\0') {
+            		printf("%s, ", result_1->ph[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
+			printf("\n");
+			printf("Dealer cards:\n");
+			for (int i = 0; i < 15; i++) {
+        		if (result_1->dh[i][0] != '\0') {
+            		printf("%s, ", result_1->dh[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
+			printf("\n");
+			stop_condition = 1;
+		}
+	}
+	
 	if (result_1 == (comms *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}

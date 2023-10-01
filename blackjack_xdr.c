@@ -6,11 +6,48 @@
 #include "blackjack.h"
 
 bool_t
+xdr_card (XDR *xdrs, card objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_vector (xdrs, (char *)objp, 15,
+		sizeof (char), (xdrproc_t) xdr_char))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_dealer_hand_commns (XDR *xdrs, dealer_hand_commns objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_vector (xdrs, (char *)objp, 4,
+		sizeof (card), (xdrproc_t) xdr_card))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_player_hand_commns (XDR *xdrs, player_hand_commns objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_vector (xdrs, (char *)objp, 4,
+		sizeof (card), (xdrproc_t) xdr_card))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
 xdr_comms (XDR *xdrs, comms *objp)
 {
 	register int32_t *buf;
 
 	int i;
+	 if (!xdr_dealer_hand_commns (xdrs, objp->dh))
+		 return FALSE;
+	 if (!xdr_player_hand_commns (xdrs, objp->ph))
+		 return FALSE;
 	 if (!xdr_vector (xdrs, (char *)objp->card_1, 4,
 		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;

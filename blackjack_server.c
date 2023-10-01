@@ -13,7 +13,10 @@
 #define DEALER_POINTS_LIMIT = 17
 
 char dealer_hand[15][4] = {};
-char player_hand[15][4] = {}; 
+char player_hand[15][4] = {};
+
+int player_hand_size = 0;
+int dealer_hand_size = 0;
 
 struct Deck {
 	char *card_name;
@@ -53,8 +56,10 @@ int total_points(char hand[][4]){ // Sum the points of a given hand
 			ace_counter++;
 		}else if(isdigit(hand[i][0]) && strlen(hand[i]) == 2){
 			total_sum += hand[i][0] - '0';
-		}else{
+		}else if(hand[i][0] == 'Q' || hand[i][0] == 'K' || hand[i][0] == 'K' || strlen(hand[i]) == 3){
 			total_sum += 10;
+		} else{
+		    break;
 		}
 	}
 
@@ -100,20 +105,24 @@ process_call_2_svc(comms *argp, struct svc_req *rqstp)
 		card_1 = select_card(deck); 
 		strncpy(result.card_1, deck[card_1].card_name, sizeof(result.card_1));
 		append_card(player_hand, deck[card_1].card_name);
+		player_hand_size++;
 		deck[card_1].card_name = NULL;
 
 		card_2 = select_card(deck);
 		strncpy(result.card_2, deck[card_2].card_name, sizeof(result.card_2));
 		append_card(player_hand, deck[card_2].card_name);
+		player_hand_size++;
 		deck[card_2].card_name = NULL;
 
 		face_up_dealer_card = select_card(deck);
 		strncpy(result.dealer_card, deck[face_up_dealer_card].card_name, sizeof(result.dealer_card));
 		append_card(dealer_hand, deck[face_up_dealer_card].card_name);
+		dealer_hand_size++;
 		deck[face_up_dealer_card].card_name = NULL;
 
 		face_down_dealer_card = select_card(deck);
 		append_card(dealer_hand, deck[face_down_dealer_card].card_name);
+		dealer_hand_size++;
 		deck[face_down_dealer_card].card_name = NULL;
 
 		char buffer[256];
@@ -126,19 +135,53 @@ process_call_2_svc(comms *argp, struct svc_req *rqstp)
 		card_1 = select_card(deck); 
 		strncpy(result.card_1, deck[card_1].card_name, sizeof(result.card_1));
 		append_card(player_hand, deck[card_1].card_name);
+		player_hand_size++;
 		deck[card_1].card_name = NULL;
 		if(total_points(dealer_hand)<17){
 			face_up_dealer_card = select_card(deck);
 			strncpy(result.dealer_card, deck[face_up_dealer_card].card_name, sizeof(result.dealer_card));
 			append_card(dealer_hand, deck[face_up_dealer_card].card_name);
+			dealer_hand_size++;
 			deck[face_up_dealer_card].card_name = NULL;
 		}
 		if(match_result() == 1){
 			char buffer[50];
+			for (int i = 0; i < player_hand_size; i++) {
+        		if (player_hand[i][0] != '\0') {
+            		strcpy(result.ph[i], player_hand[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
+
+			for (int i = 0; i < dealer_hand_size; i++) {
+        		if (dealer_hand[i][0] != '\0') {
+            		strcpy(result.dh[i], dealer_hand[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
+
     		sprintf(buffer, "You Win!");
     		strcpy(result.msg, buffer);
 		}else{
 			char buffer[50];
+			for (int i = 0; i < player_hand_size; i++) {
+        		if (player_hand[i][0] != '\0') {
+            		strcpy(result.ph[i], player_hand[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
+
+			for (int i = 0; i < dealer_hand_size; i++) {
+        		if (dealer_hand[i][0] != '\0') {
+            		strcpy(result.dh[i], dealer_hand[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
+			
     		sprintf(buffer, "You Lose...");
     		strcpy(result.msg, buffer);
 		}
@@ -150,10 +193,26 @@ process_call_2_svc(comms *argp, struct svc_req *rqstp)
 			face_up_dealer_card = select_card(deck);
 			strncpy(result.dealer_card, deck[face_up_dealer_card].card_name, sizeof(result.dealer_card));
 			append_card(dealer_hand, deck[face_up_dealer_card].card_name);
+			dealer_hand_size++;
 			deck[face_up_dealer_card].card_name = NULL;
 		}
 		if(match_result() == 1){
 			char buffer[50];
+			for (int i = 0; i < player_hand_size; i++) {
+        		if (player_hand[i][0] != '\0') {
+            		strcpy(result.ph[i], player_hand[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
+
+			for (int i = 0; i < dealer_hand_size; i++) {
+        		if (dealer_hand[i][0] != '\0') {
+            		strcpy(result.dh[i], dealer_hand[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
     		sprintf(buffer, "You Win!");
     		strcpy(result.msg, buffer);
 		}else{

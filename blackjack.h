@@ -14,7 +14,15 @@ extern "C" {
 #endif
 
 
+typedef char card[15];
+
+typedef card dealer_hand_commns[4];
+
+typedef card player_hand_commns[4];
+
 struct comms {
+	dealer_hand_commns dh;
+	player_hand_commns ph;
 	char card_1[4];
 	char card_2[4];
 	char dealer_card[4];
@@ -42,9 +50,15 @@ extern int blackjack_2_freeresult ();
 /* the xdr functions */
 
 #if defined(__STDC__) || defined(__cplusplus)
+extern  bool_t xdr_card (XDR *, card);
+extern  bool_t xdr_dealer_hand_commns (XDR *, dealer_hand_commns);
+extern  bool_t xdr_player_hand_commns (XDR *, player_hand_commns);
 extern  bool_t xdr_comms (XDR *, comms*);
 
 #else /* K&R C */
+extern bool_t xdr_card ();
+extern bool_t xdr_dealer_hand_commns ();
+extern bool_t xdr_player_hand_commns ();
 extern bool_t xdr_comms ();
 
 #endif /* K&R C */
