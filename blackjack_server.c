@@ -56,7 +56,7 @@ int total_points(char hand[][4]){ // Sum the points of a given hand
 			ace_counter++;
 		}else if(isdigit(hand[i][0]) && strlen(hand[i]) == 2){
 			total_sum += hand[i][0] - '0';
-		}else if(hand[i][0] == 'Q' || hand[i][0] == 'K' || hand[i][0] == 'K' || strlen(hand[i]) == 3){
+		}else if(hand[i][0] == 'Q' || hand[i][0] == 'K' || hand[i][0] == 'J' || strlen(hand[i]) == 3){
 			total_sum += 10;
 		} else{
 		    break;
@@ -181,7 +181,7 @@ process_call_2_svc(comms *argp, struct svc_req *rqstp)
             		break; // Stop when you encounter an empty string
         		}
     		}
-			
+
     		sprintf(buffer, "You Lose...");
     		strcpy(result.msg, buffer);
 		}
