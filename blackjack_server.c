@@ -217,6 +217,21 @@ process_call_2_svc(comms *argp, struct svc_req *rqstp)
     		strcpy(result.msg, buffer);
 		}else{
 			char buffer[50];
+			for (int i = 0; i < player_hand_size; i++) {
+        		if (player_hand[i][0] != '\0') {
+            		strcpy(result.ph[i], player_hand[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
+
+			for (int i = 0; i < dealer_hand_size; i++) {
+        		if (dealer_hand[i][0] != '\0') {
+            		strcpy(result.dh[i], dealer_hand[i]);
+        		} else {
+            		break; // Stop when you encounter an empty string
+        		}
+    		}
     		sprintf(buffer, "You Lose...");
     		strcpy(result.msg, buffer);
 		}
